@@ -1,0 +1,28 @@
+<html>
+
+<head>
+    <link href="/styles.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+    <form action="/login" method="POST">
+        <h1 class="welcome">Welcome</h1>
+        <div>
+            <div>Email or username</div>
+            <input class="input" type="text" id="username" name="username" required>
+        </div>
+        <div>
+            <div>Password</div>
+            <input class="input" type="password" id="password" name="password" required>
+        </div>
+        <p class="disclaimer">
+            Disclaimer: This login page is purely for personal use. It is not affiliated
+            with Robinhood in any way. No personal information is stored. Use at your own risk.
+        </p>
+        <button class="submit-button" type="submit">Sign In</button>
+        <div class="login-message"> <%= loginMessage %> </div>
+    </form>
+</body>
+
+</html>
