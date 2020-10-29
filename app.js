@@ -3,22 +3,24 @@ const express = require('express');
 const bouncer = require('express-bouncer')(60000, 600000, 3);
 const app = express();
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.set('view-engine', 'ejs');
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/public'));
 
-// let alexainput;
+let alexainput;
 let loginMessage;
 
 app.get('/', (req, res) => {
     // login page, and gets Amazon state and redirect uri
     res.render('index.ejs', { loginMessage: loginMessage });
-    alexainput = {
-        state: req.query.state,
-        redirect_uri: req.query.redirect_uri
-    };
+    if (req.query.state && req.query.redirect_uri) {
+        alexainput = {
+            state: req.query.state,
+            redirect_uri: req.query.redirect_uri
+        };
+    }
 });
 
 // login to RH and retrieve auth token
@@ -40,8 +42,10 @@ app.post('/login', bouncer.block, (req, res) => {
     rhurl.searchParams.append('password', password);
 
     // Redirect url
-    const redurl = new URL(alexainput.redirect_uri);
-    redurl.set('state', alexainput.state);
+    if (alexainput) {
+        const redurl = new URL(alexainput.redirect_uri);
+        redurl.set('state', alexainput.state);
+    }
 
     // POST to Robinhood, get tokens
     request.post(rhurl.toString(), (error, response) => {
@@ -58,12 +62,13 @@ app.post('/login', bouncer.block, (req, res) => {
         } else {
             bouncer.reset(req);
             let refresh_token = JSON.parse(response.toJSON().body).refresh_token;
-            redurl.set('code', refresh_token);
-            // // redirect to amazon
-            res.redirect(redurl.toString());
+            if (alexainput) {
+                redurl.set('code', refresh_token);
+                // redirect to amazon
+                res.redirect(redurl.toString());
+            }
         }
     });
-
 });
 
 // handle access token request or refresh token request
