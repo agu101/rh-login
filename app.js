@@ -28,8 +28,8 @@ app.post('/login', bouncer.block, (req, res) => {
     // Robinhood login url
     const rhurl = new URL('/oauth2/token/', 'https://api.robinhood.com');
     rhurl.searchParams.append('grant_type', 'password');
-    rhurl.searchParams.append('client_id', 'c82SH0WZOsabOXGP2sxqcj34FxkvfnWRZBKlBjFS');
-    rhurl.searchParams.append('device_token', '40305730-6c87-479f-a421-bb008dad58cc');
+    rhurl.searchParams.append('client_id', '');
+    rhurl.searchParams.append('device_token', '');
     rhurl.searchParams.append('expires_in', 86400);
     rhurl.searchParams.append('challenge_type', 'sms');
 
@@ -63,9 +63,6 @@ app.post('/login', bouncer.block, (req, res) => {
             res.redirect(redurl.toString());
         }
     });
-
-
-
 
 });
 
